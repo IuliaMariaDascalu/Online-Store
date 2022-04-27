@@ -1,10 +1,6 @@
 <h1>Cos cumparaturi</h1>
 <br>
 <?php
-//var_dump($_SESSION['cos']);
-//pe baza id-ului iau restul de date despre un produs
-//var_dump(preiaPordusDupaId(9));
-//daca este gol ii dam un mesaj
 
 if(!isset($_SESSION['cos']) || empty($_SESSION['cos'])) {
     print 'Cosul tau este gol';
