@@ -5,12 +5,10 @@ if (!isset($_SESSION['cos'])) {
     return;
 }
 
-//var_dump($_SESSION);
-//pe sesiune am salvata adresa de email a utilizatorului
 $user = preiaUtilizatorDupaEmail($_SESSION['user']);
 $cos = $_SESSION['cos'];
 
-$produse=[];//array gol un salvam denumirea pretul si cantitatea
+$produse=[];
 
 foreach ($cos as $idProdus => $cantitate) {
    $produs = preiaPordusDupaId($idProdus);
@@ -18,16 +16,8 @@ foreach ($cos as $idProdus => $cantitate) {
    $detaliiProdus['pret'] = $produs['pret'];
    $detaliiProdus['cantitate'] = $cantitate;
    
-   $produse[] = $detaliiProdus; //le pun in array
+   $produse[] = $detaliiProdus; 
 }
-
-//var_dump($produse);
-//transdorm acest array in string, pt ca in bd pot adauga doar stringuri
-//folosesc JSON-javascript object notation
-//pot transforma orice structura de date intr-un string pe care pot sa il salvez in bd, il trimit in aplicatie etc.
-//array in JSON: json_encode
-//JSON in array: json_decode
-//var_dump(json_encode($produse));
 
 $comanda = adaugaComanda($user['id'], date('Y-m-d'), json_encode($produse));
 if ($comanda) {
