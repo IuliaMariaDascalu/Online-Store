@@ -21,21 +21,15 @@
     </table>
 </form>
 <?php
-/*pentru prelucarea unui formular verificam daca s-a trimis formularul
- * verificam o cheie daca e setata
- */
 if (isset($_POST['inregistrare'])) {
     $email = $_POST['email_utilizator'];
     $parola = $_POST['pass'];
-    /*am salvat ce s-a trimis pe formular in doua variabile*/
      
     $rezultatInregistrare = inregistrareUtilizator($email, $parola);
     if ($rezultatInregistrare) {
-       // print '<div style="color: green">Te-ai inregistrat cu succes</div>';
     $_SESSION['user']=$email;//autologin
     $_SESSION['welcome']= "Salut, $email, te-ai inregistrat cu succes!";
     header('location:index.php');
-     //cand se inregistreaza se incarca templatul conectat
     } else {
         print '<div style="color: red">Eroare la inregistrare</div>';
     }
