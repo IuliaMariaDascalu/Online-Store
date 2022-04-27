@@ -11,7 +11,6 @@
     </ul> 
 </nav>
 <?php
-//daca logout este setat pe GET fac session_destroy si un redirect catre index
 
 if (isset($_GET['logout'])) {
     session_destroy();
@@ -19,7 +18,7 @@ if (isset($_GET['logout'])) {
 }
 
 if (isset($_SESSION['welcome'])) {
-    print $_SESSION['welcome'];//il afisez doar prima oara cand ajung aici din login
+    print $_SESSION['welcome'];
     unset($_SESSION['welcome']);   
 }
 if (isset($_GET['page'])) {
