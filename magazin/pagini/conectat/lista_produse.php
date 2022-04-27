@@ -1,6 +1,5 @@
 <?php
 $sort = NULL;
-//var_dump(preiaProduse());die();
     if (isset($_POST['sort'])) {
         $sort = $_POST['sortare'];
     }
@@ -33,11 +32,9 @@ if (isset($_GET['reseteaza'])) {
       $keyword = $_POST['kw'];
       $produse = preiaProduseDupaKeyword($keyword);
       setcookie('keyword', $keyword, time()+24*60*60);
-    //am salvat in cookie keywordul
     
     } else if (isset($_COOKIE['keyword'])) {
-        //nu am trimis cautare dar exista cookie
-        $keyword = $_COOKIE['keyword']; //preiau valoarea din cookie
+        $keyword = $_COOKIE['keyword']; 
         $produse = preiaProduseDupaKeyword($keyword);
 
     }else {
@@ -64,14 +61,12 @@ if (count($produse) == 0) {
         $rating = preiaRatingMediuDupaIdProdus($produs['id']);
     ?>
     
-               <!--iterez prin produse -->
                <tr>
                    <td>
                        <img width="50px" 
                             src="imagini/<?php print (!empty($produs['imagine'])) ? $produs['imagine'] : 'no-image-available.jpeg';?>"
                             onerror ="this.onerror=null; this.src='imagini/no-image-available.jpeg'"
-                            />
-                       <!--  folosim un cod de java script pentru cazul in care poza pusa pentru un produs nu este gasita pe server, iar in cazul asta sa se puna poza pentru no image-->
+                        />
                             
                    </td>
                    <td>
@@ -85,35 +80,25 @@ if (count($produse) == 0) {
                     <?php if ($_SESSION['user'] == 'admin@magazinonline.ro') {?>
                     <td><a href="index.php?page=2&sterge=<?php print $produs['id'];?>">Sterge</a></td>
                    <td><a href="index.php?page=2&editeaza=<?php print $produs['id'];?>">Editeaza</a></td>
-                    <?php } ?>
-
-                 <!-- Dam click pe editeaza, se pune in query string editeaza=id
-                 iar in aceeasi pagina daca am pe get editeaza fac require once la pagina editeaza produs
-                 -->  
+                    <?php } ?>  
                </tr>
     <?php } ?>
-               <!--cosul de cumparaturi il salvez la nivel pe server(la nivel de sesiune), nu la nivel de BD pentru ca am multe update-uri, stergeri etc-->
       
 </table>
 <?php 
-//var_dump(stergeProdusDupaId(9));
-//die();
 
  if (isset($_GET['sterge']) && $_SESSION['user'] == 'admin@magazinonline.ro') {
      $id = $_GET['sterge'];
      $stergereBd = stergeProdusDupaId($id);
      if ($stergereBd) {
-         //daca s-a sters vreau sa il sterg si din cos
          unset ($_SESSION['cos'][$id]);
          header ("location: index.php?page=2");
      } else {
-         //daca nu s-a putut efectua stergerea ii dau un mesaj
         print 'Eroare la stergerea produsului'; 
      }
  }
  
  if (isset($_GET['editeaza']) && $_SESSION['user'] == 'admin@magazinonline.ro') {
-     require_once 'pagini/conectat/editeaza_produs.php';
-     
+     require_once 'pagini/conectat/editeaza_produs.php';     
  }
  ?>
