@@ -1,13 +1,7 @@
 <?php
 
 $idProdus = $_GET['editeaza'];
-//verificare: print "produs de editat: $idProdus";
-//editeaza produs este incarcat in lista produse cand editeaza este setat in url
-
-//am nevoie de toate datele despre produs
-
 $produs = preiaPordusDupaId($idProdus);
-//var_dump($produs);
 ?>
 
 <form method="post" enctype="multipart/form-data">
@@ -25,9 +19,7 @@ $produs = preiaPordusDupaId($idProdus);
                 <img width="150px" 
                 src="imagini/<?php print (!empty($produs['imagine'])) ? $produs['imagine'] : 'no-image-available.jpeg';?>"
                 onerror ="this.onerror=null; this.src='imagini/no-image-available.jpeg'"
-                />
-                       
-                            
+                />             
             </td>
         </tr>
         <tr>
@@ -39,8 +31,6 @@ $produs = preiaPordusDupaId($idProdus);
         </tr>
     </table>
 </form>
-<!--imaginea o sa se modifice doar daa este trimisa una noua, daca nu se trimite nimic atunci ramane imaginea care este
- deja pusa -->
 
 <?php
 if (isset($_POST['edit'])) {
@@ -48,28 +38,21 @@ if (isset($_POST['edit'])) {
     $pret = $_POST['pret'];
     
     if (isset($_FILES['img'])) {
-        if ($_FILES['img']['error'] == 0) {
-            //continui cu prelucrarea imaginii-salvez noua imagine
-            //verificam daca fisierul este o imagine-are format acceptat
-           //1.validez tipul fisierului
-           //2.ii asociem fisierului un nume unic
-           //3.trebuie mutat din tmp intr-un folder- il salvez pe server
-           //4.salvam numele fisierului in baza de date
-                    
+        if ($_FILES['img']['error'] == 0) {        
             switch ($_FILES['img']['type']) {
                 case 'image/jpg';
                 case 'image/jpeg';
                 case 'image/png';
                 case 'image/bmp';
                 case 'image/gif';
-                    //salvam imaginea
+                    
                     $numeImg = uniqid() . $_FILES['img']['name'];
                     $salvarePeServer = move_uploaded_file($_FILES['img']['tmp_name'], 'imagini/'. $numeImg);
                     
                     if($salvarePeServer) {
                         $editeazaBD = editeazaProdus($idProdus, $denumire, $pret, $numeImg);
                         if ($editeazaBD) {
-                            //sterg imaginea veche de pe server pe care o avea produsul
+                           
                            if (!empty ($produs['imagine'])) {
                             unlink('imagini/' . $pordus['imagine']);
                            }
@@ -91,10 +74,9 @@ if (isset($_POST['edit'])) {
                     break;
             }
         } else if ($_FILES['img']['error'] ==4 ){
-            //editez produs dar nu schimb imaginea
+            
             $editareProdus = editeazaProdus($idProdus, $denumire, $pret);
             if ($editareProdus) {
-                //fac un refresh la pagina
                 header("location: index.php?page=2");
             } else {
                 print 'Eroare la editarea produsului';
@@ -105,22 +87,3 @@ if (isset($_POST['edit'])) {
             
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
