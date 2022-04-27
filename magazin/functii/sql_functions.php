@@ -10,25 +10,17 @@ function conectareBd($host = 'localhost',
     return mysqli_connect($host, $user, $password, $database);
 }
 
-//verific daca adresa de email mai exista adresa de email in DB cand cineva incearca sa se inregistreze
-
 function preiaUtilizatorDupaEmail($adresaEmail) 
 {
     $link = conectareBd();
-    //query preia date
     $query = "SELECT * FROM utilizator WHERE email = '$adresaEmail'";
-    /*email- atributul din baza de date
-     * adresaEmail-variabila trimisa in cadrul functiei
-     */
-    $result = mysqli_query($link, $query);//result set-structura specifica bazei de date
-    //nu pot prelucra ca atare result set, asa ca il transformam in array
+    $result = mysqli_query($link, $query);
     $utilizator = mysqli_fetch_array($result, MYSQLI_ASSOC);
-    
+  
     return $utilizator;//daca nu gaseste user-> null eroare->false gaseste user->array
 
 }
 
-//avem nevoie de o functie care sa sanitizeze inputurile trimise de utilizator 
 
 function clearData($input, $link)
 {
@@ -40,9 +32,6 @@ function clearData($input, $link)
     return $input;
 }
 
-//functie pentru inregistrare 
-//returneaza true - s-a facut inregistrarea cu succes
-//false in 2 cazuri- exista deja email-ul sau a dat eroare insertul
 
 function inregistrareUtilizator($email, $pass)
 {
@@ -54,21 +43,13 @@ function inregistrareUtilizator($email, $pass)
    
    //verific daca exista un utilizator cu email-ul trimis
    $user = preiaUtilizatorDupaEmail($email);
-   //array('status'=>false, 'msg'=>'exista deja adresa de email')
    if ($user) {
        return false;
    }
-   
    $query = "INSERT INTO utilizator VALUES(NULL, '$email', '$pass')";
-   //result=mysqli_query($link, $query)
-   //daca result e false, returnez un array cu un mesaj similar cu cel de sus
-   //daca e true returnez un array cu status true si un mesaj de succes
    return mysqli_query($link, $query);     
 }
 
-//functie de conectare(dupa ce validez datele, caut utilizatorul dupa email
-//daca gasesc emailul in BD verific parola-daca este la fel ca cea din BD
-// => credentiale corecte, utilizatoru redirectionat catre sectiunea pentru utilizator conectat
   function conectare ($email, $parola) 
   {
       
@@ -78,15 +59,8 @@ function inregistrareUtilizator($email, $pass)
       
       $user = preiaUtilizatorDupaEmail($email);
       
-      if ($user) { //am gasit user, verific parola
-         /* if (md5($pass) == $user['parola']) {
-              return true;
-          } else {
-              return false;
-          }*/
-          //echivalent cu:
-          return md5($parola) == $user['parola'];
-          
+      if ($user) { 
+          return md5($parola) == $user['parola'];    
       } 
       return false;
   }
@@ -99,8 +73,7 @@ function inregistrareUtilizator($email, $pass)
      
      $query = "UPDATE utilizator SET parola = '$newPass' WHERE email='$email'";
   
-     return mysqli_query ($link, $query); //true sau false
-     
+     return mysqli_query ($link, $query); //true sau false  
   }
 
 function adaugaProdus ($nume, $pret,$img)
@@ -116,8 +89,6 @@ function adaugaProdus ($nume, $pret,$img)
 
 }
 
-//folosim fetch_all
-
 function preiaProduse($sort = NULL)
 {
     $link = conectareBd();
@@ -125,16 +96,13 @@ function preiaProduse($sort = NULL)
     if (!empty($sort)) {
         $query .= "ORDER BY $sort";
     }
-    //var_dump($query);die();
     $rezultat = mysqli_query($link, $query);
-    
-    //obtinut un array de array-uri (fiecare array micut contine datele unei inregistrari)
     
     $produse = mysqli_fetch_all($rezultat, MYSQLI_ASSOC);
     
     return $produse;
 }
-//id este salvat pe sesiune
+
 function preiaPordusDupaId ($id)
 {
     $link = conectareBd();
@@ -148,7 +116,7 @@ function preiaPordusDupaId ($id)
     return $produs;
 }
 
-//stergere produse din lista produse
+
 function stergeProdusDupaId ($id) 
 {
     $link = conectareBd();
@@ -180,9 +148,6 @@ function preiaProduseDupaKeyword ($keyword)
     $keyword = clearData($keyword, $link);
     
     $query = "SELECT * FROM produs WHERE denumire LIKE '%$keyword%'";
-    //%- wildcard (0 sau oricate caractere)
-    //LIKE '%$keyword%' = denumirea trebuie sa contina keywordul
-    //LIKE '%$laptop%' => laptop/un laptop/laptop lenovo/un laptop lenovo etc
     
     $rez = mysqli_query($link, $query);
     $produse = mysqli_fetch_all($rez, MYSQLI_ASSOC);
@@ -193,15 +158,11 @@ function preiaProduseDupaKeyword ($keyword)
 function adaugaComanda ($userId, $data, $produse)
 {
     $link = conectareBd();
-    //datele vin din cosul de cumparaturi
-    //o sa am un buton ,,finalizeaza comanda"
-    //datele din cos sunt salvate pe sesiune, nu mai trebuie sanitizate inputurile
     
     $query = "INSERT INTO comanda VALUES(NULL, $userId, '$data', '$produse')";
     //var_dump($query);die();
     return mysqli_query($link, $query);
 }
-//o functie care preia comenzile dupa id utilizator
 
 function preiaComenziDupaUserId ($userId) {
     $link = conectareBd();
